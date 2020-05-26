@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SampleBlazorApp.Config\SampleBlazorApp.Config.csproj" />
     <ProjectReference Include="..\Shared\SampleBlazorApp.Shared.csproj" />
   </ItemGroup>
 

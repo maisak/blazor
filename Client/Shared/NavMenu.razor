@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using SampleBlazorApp.Shared
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">SampleBlazorApp</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -20,6 +22,11 @@
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="config">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Config
             </NavLink>
         </li>
     </ul>
