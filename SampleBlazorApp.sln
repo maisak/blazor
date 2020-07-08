@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleBlazorApp.Client", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleBlazorApp.Shared", "Shared\SampleBlazorApp.Shared.csproj", "{34853040-160F-44FF-BE89-06F537CE6BD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBlazorApp.Config", "SampleBlazorApp.Config\SampleBlazorApp.Config.csproj", "{331DA328-BA06-48E9-BAE7-E04030330241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleBlazorApp.Config", "SampleBlazorApp.Config\SampleBlazorApp.Config.csproj", "{331DA328-BA06-48E9-BAE7-E04030330241}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
