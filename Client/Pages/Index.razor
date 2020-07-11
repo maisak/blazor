@@ -1,6 +1,7 @@
 ﻿@page "/"
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Index> Loc
 
-<h1>Hello, world!</h1>
+<h1>@Loc["Hello"]</h1>
 
 Welcome to your new app.
 
