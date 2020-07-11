@@ -1,5 +1,10 @@
 ﻿@page "/config"
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Configuration> Loc
+
+<h1>@Loc["boy"]</h1>
 
 <div class="my-component">
     This Blazor component is defined in the <strong>SampleBlazorApp.Config</strong> package.
+
+    <CultureSelector />
 </div>
