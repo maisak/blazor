@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inject Microsoft.Extensions.Localization.IStringLocalizer<Index> Loc
+@using SampleBlazorApp.Shared.Localization
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Strings> Loc
 
 <h1>@Loc["Hello"]</h1>
 

@@ -14,10 +14,11 @@
 
 
   <ItemGroup>
-    <EmbeddedResource Update="Configuration.es.resx">
-      <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Shared\SampleBlazorApp.Shared.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <EmbeddedResource Update="Configuration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
