@@ -1,0 +1,14 @@
+﻿@page "/controls"
+<h3>ControlsDemo</h3>
+
+<div class="inputs">
+    <h4>Inputs</h4>
+    <span>Selected value:</span>
+    <span>@selectedValue</span>
+    <input type="range" min="0" max="@overall" @bind="@selectedValue" @bind:event="oninput"/>
+</div>
+
+@code {
+    int overall = 100;
+    int selectedValue = 13;
+}
