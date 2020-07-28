@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
+using Tewr.Blazor.FileReader;
 
 namespace SampleBlazorApp.Client
 {
@@ -14,6 +15,13 @@ namespace SampleBlazorApp.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+            builder.Services.AddFileReaderService(
+                options =>
+                {
+                    options.UseWasmSharedBuffer = true;
+                }
+                );
             builder.RootComponents.Add<App>("app");
             
             builder.Services.AddHttpClient("SampleBlazorApp.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
