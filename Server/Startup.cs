@@ -33,6 +33,13 @@ namespace SampleBlazorApp.Server
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
             services
                 .AddAuthentication()
                 .AddIdentityServerJwt();
@@ -61,6 +68,8 @@ namespace SampleBlazorApp.Server
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseIdentityServer();
             app.UseAuthentication();
