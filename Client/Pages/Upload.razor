@@ -3,6 +3,7 @@
 @using System.IO;
 @using System.Net.Http.Headers
 @using System.Runtime.CompilerServices
+@using System.Threading
 @using Tewr.Blazor.FileReader
 
 @inject IFileReaderService fileReader
@@ -12,16 +13,16 @@
 
 <div class="row">
     <div class="col-4">
-         <div class="form-group">
-             <input type="file" @ref="inputReference" @onchange="OpenFileAsync"/>
-             <ul>
-                 <li>File Name: @fileName</li>
-                 <li>Size: @size</li>
-                 <li>Type: @type</li>
-             </ul>
-         </div>
+        <div class="form-group">
+            <input type="file" @ref="inputReference" @onchange="OpenFileAsync" />
+            <ul>
+                <li>File Name: @fileName</li>
+                <li>Size: @size</li>
+                <li>Type: @type</li>
+            </ul>
+        </div>
         <button class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
-        
+
         @if (!string.IsNullOrWhiteSpace(message))
         {
             <div class="alert alert-success">
@@ -32,7 +33,7 @@
     <div class="col-4">
         @if (imagePath != null)
         {
-            <img style="width:150px" src="@imagePath"/>
+            <img style="width:150px" src="@imagePath" />
         }
     </div>
 </div>
@@ -65,7 +66,7 @@
         type = fileInfo.Type;
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
-        {
+        { 
             fileStream = new MemoryStream(ms.ToArray());
         }
     }
@@ -77,7 +78,7 @@
         content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
 
         content.Add(new StreamContent(fileStream, (int)fileStream.Length), "image", fileName);
-
+        
         string url = "https://localhost:5001";
 
         var response = await client.PostAsync($"{url}/api/images", content);
