@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleBlazorApp.Server.Data;
+using SampleBlazorApp.Server.Data.Application;
+using SampleBlazorApp.Server.Data.Image;
 using SampleBlazorApp.Server.Models;
 
 namespace SampleBlazorApp.Server
@@ -46,6 +47,9 @@ namespace SampleBlazorApp.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddDbContext<ImageDbContext>(option => { option.UseSqlite("Data Source = Images.db"); });
+            services.AddScoped<ImageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SampleBlazorApp.Server.Data.Image;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 
 namespace SampleBlazorApp.Server.Controllers
 {
@@ -13,11 +12,11 @@ namespace SampleBlazorApp.Server.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly IHostEnvironment _environment;
+        private readonly ImageService _imageService;
 
-        public ImagesController(IHostEnvironment environment)
+        public ImagesController(ImageService imageService )
         {
-            this._environment = environment;
+            _imageService = imageService;
         }
 
         [HttpPost]
@@ -26,23 +25,31 @@ namespace SampleBlazorApp.Server.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("Upload a file");
 
-            string fileName = image.FileName;
-            string extension = Path.GetExtension(fileName);
-
+            var fileName = image.FileName;
+            var extension = Path.GetExtension(fileName);
+            
             string[] allowedExtensions = {".jpg", ".png", ".bmp"};
 
             if (!allowedExtensions.Contains(extension))
-                return BadRequest("File is not valid image");
+                return BadRequest("File is not a valid image");
 
-            string newFileName = $"{Guid.NewGuid()}{extension}";
-            string filePath = Path.Combine(_environment.ContentRootPath, "wwwRoot", "Images", newFileName);
+            string stringToMoveToDb;
 
-            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            await using (var ms = new MemoryStream())
             {
-                await image.CopyToAsync(fileStream);
+                await image.CopyToAsync(ms);
+                stringToMoveToDb = Convert.ToBase64String(ms.ToArray());
             }
 
-            return Ok($"Images/{newFileName}");
+            var newImage = new Image
+            {
+                Type = extension,
+                Base64String = stringToMoveToDb
+            };
+
+            await _imageService.AddImageAsync(newImage);
+
+            return Ok();
         }
     }
 }
