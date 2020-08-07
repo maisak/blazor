@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using SampleBlazorApp.Server.Data.Image;
 using System;
 using System.IO;
@@ -13,13 +12,11 @@ namespace SampleBlazorApp.Server.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly IHostEnvironment _environment;
         private readonly ImageService _imageService;
 
-        public ImagesController(IHostEnvironment environment, ImageService imageService )
+        public ImagesController(ImageService imageService )
         {
-            this._environment = environment;
-            this._imageService = imageService;
+            _imageService = imageService;
         }
 
         [HttpPost]
@@ -28,15 +25,15 @@ namespace SampleBlazorApp.Server.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("Upload a file");
 
-            string fileName = image.FileName;
-            string extension = Path.GetExtension(fileName);
+            var fileName = image.FileName;
+            var extension = Path.GetExtension(fileName);
             
             string[] allowedExtensions = {".jpg", ".png", ".bmp"};
 
             if (!allowedExtensions.Contains(extension))
-                return BadRequest("File is not valid image");
+                return BadRequest("File is not a valid image");
 
-            var stringToMoveToDb = String.Empty;
+            string stringToMoveToDb;
 
             await using (var ms = new MemoryStream())
             {
@@ -52,7 +49,7 @@ namespace SampleBlazorApp.Server.Controllers
 
             await _imageService.AddImageAsync(newImage);
 
-            return Ok($"Image");
+            return Ok();
         }
     }
 }

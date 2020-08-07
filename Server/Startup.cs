@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleBlazorApp.Server.Data;
 using SampleBlazorApp.Server.Data.Application;
 using SampleBlazorApp.Server.Data.Image;
 using SampleBlazorApp.Server.Models;

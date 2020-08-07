@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
 
 namespace SampleBlazorApp.Server.Data.Image
 {
     public class ImageService
     {
         #region Private members
-        private ImageDbContext dbContext;
+        private readonly ImageDbContext _dbContext;
         #endregion
 
         #region Constructor
         public ImageService(ImageDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
         #endregion
 
         #region Public methods
-    
+
         /// <summary>
         /// This method add a new image to the DbContext and saves it
         /// </summary>
@@ -28,15 +24,9 @@ namespace SampleBlazorApp.Server.Data.Image
         /// <returns></returns>
         public async Task<Image> AddImageAsync(Image image)
         {
-            try
-            {
-                dbContext.Image.Add(image);
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            _dbContext.Image.Add(image);
+            await _dbContext.SaveChangesAsync();
+
             return image;
         }
 
