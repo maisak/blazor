@@ -9,6 +9,8 @@
 @inject IFileReaderService fileReader
 @inject HttpClient client
 
+@inject NavigationManager NavigationManager
+
 <h1>Upload file!</h1>
 
 <div class="row">
@@ -21,7 +23,8 @@
                 <li>Type: @type</li>
             </ul>
         </div>
-        <button class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
+
+        <button type="button" disabled="@disabledButton" class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
 
         @if (!string.IsNullOrWhiteSpace(message))
         {
@@ -33,7 +36,7 @@
     <div class="col-4">
         @if (imagePath != null)
         {
-            <img style="width:150px" src="@imagePath" />
+            <img style="width:150px" src="@imagePath"/>
         }
     </div>
 </div>
@@ -49,6 +52,8 @@
     string size = string.Empty;
 
     Stream fileStream = null;
+
+    bool disabledButton = true;
 
 
     async Task OpenFileAsync()
@@ -66,8 +71,10 @@
         type = fileInfo.Type;
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
-        { 
+        {
             fileStream = new MemoryStream(ms.ToArray());
+            imagePath = $"data:image/{type};base64, {Convert.ToBase64String(ms.ToArray())}";
+            disabledButton = false;
         }
     }
 
@@ -78,15 +85,13 @@
         content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
 
         content.Add(new StreamContent(fileStream, (int)fileStream.Length), "image", fileName);
-        
-        string url = "https://localhost:5001";
+
+        string url = new Uri(NavigationManager.BaseUri).ToString();
 
         var response = await client.PostAsync($"{url}/api/images", content);
 
         if (response.IsSuccessStatusCode)
         {
-            var uploadedFileName = await response.Content.ReadAsStringAsync();
-            imagePath = $"{url}/{uploadedFileName}";
             message = "File has been uploaded successfully!";
         }
     }
