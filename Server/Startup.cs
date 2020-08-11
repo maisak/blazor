@@ -26,7 +26,7 @@ namespace SampleBlazorApp.Server
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("SecurityDb")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -48,7 +48,7 @@ namespace SampleBlazorApp.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.AddDbContext<ImageDbContext>(option => { option.UseSqlite("Data Source = Images.db"); });
+            services.AddDbContext<ImageDbContext>(option => { option.UseSqlite(Configuration.GetConnectionString("ImageDb")); });
             services.AddScoped<ImageService>();
         }
 

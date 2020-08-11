@@ -333,3 +333,4 @@ ASALocalRun/
 /Server/sqlitesample.db-shm
 /Server/sqlitesample.db
 /Server/Images.db
+/Server/Security.db
