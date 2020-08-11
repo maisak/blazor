@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SampleBlazorApp.Server.Data.Image;
-using System;
-using System.IO;
+using SampleBlazorApp.Server.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,31 +18,25 @@ namespace SampleBlazorApp.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MyJson json)
+        public async Task<IActionResult> Post([FromBody] InputModel json)
         {
-            if (json.image == null || json.image.Length == 0)
+            if (json.Image == null || json.Image.Length == 0)
                 return BadRequest("Upload a file");
             
             string[] allowedExtensions = {"image/jpeg", "image/png"};
 
-            if (!allowedExtensions.Contains(json.type))
+            if (!allowedExtensions.Contains(json.Type))
                 return BadRequest("File is not a valid image");
             
             var newImage = new Image
             {
-                Type = json.type,
-                Base64String = json.image
+                Type = json.Type,
+                Base64String = json.Image
             };
 
             await _imageService.AddImageAsync(newImage);
 
             return Ok();
         }
-    }
-
-    public class MyJson
-    {
-        public string image { get; set; }
-        public string type { get; set; }
     }
 }

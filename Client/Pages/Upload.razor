@@ -7,12 +7,14 @@
 @using System.Threading
 @using Tewr.Blazor.FileReader
 @using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
 
 @inject IFileReaderService fileReader
 @inject HttpClient client
 
 @inject NavigationManager NavigationManager
 
+@attribute [Authorize]
 <h1>Upload file!</h1>
 
 <div class="row">
