@@ -332,5 +332,4 @@ ASALocalRun/
 /Server/sqlitesample.db-wal
 /Server/sqlitesample.db-shm
 /Server/sqlitesample.db
-
-Server/wwwRoot/Images
+/Server/Images.db

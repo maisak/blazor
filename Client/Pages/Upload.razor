@@ -3,12 +3,18 @@
 @using System.IO;
 @using System.Net.Http.Headers
 @using System.Runtime.CompilerServices
+@using System.Text
 @using System.Threading
 @using Tewr.Blazor.FileReader
+@using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
 
 @inject IFileReaderService fileReader
 @inject HttpClient client
 
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
 <h1>Upload file!</h1>
 
 <div class="row">
@@ -21,7 +27,8 @@
                 <li>Type: @type</li>
             </ul>
         </div>
-        <button class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
+
+        <button type="button" disabled="@disabledButton" class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
 
         @if (!string.IsNullOrWhiteSpace(message))
         {
@@ -33,7 +40,7 @@
     <div class="col-4">
         @if (imagePath != null)
         {
-            <img style="width:150px" src="@imagePath" />
+            <img style="width:150px" src="@imagePath"/>
         }
     </div>
 </div>
@@ -43,12 +50,15 @@
     ElementReference inputReference;
     string message = String.Empty;
     string imagePath = null;
+    string imageBase64 = null;
 
     string fileName = string.Empty;
     string type = string.Empty;
     string size = string.Empty;
 
     Stream fileStream = null;
+
+    bool disabledButton = true;
 
 
     async Task OpenFileAsync()
@@ -66,27 +76,24 @@
         type = fileInfo.Type;
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
-        { 
+        {
             fileStream = new MemoryStream(ms.ToArray());
+            imageBase64 = Convert.ToBase64String(ms.ToArray());
+            imagePath = $"data:image/{type};base64, {imageBase64}";
+            disabledButton = false;
         }
     }
 
     async Task UploadFileAsync()
     {
-        //Create the content
-        var content = new MultipartFormDataContent();
-        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+        string url = new Uri(NavigationManager.BaseUri).ToString();
 
-        content.Add(new StreamContent(fileStream, (int)fileStream.Length), "image", fileName);
-        
-        string url = "https://localhost:5001";
+        var content = new StringContent(JsonSerializer.Serialize(new { Image = imageBase64, Type = type}), Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync($"{url}/api/images", content);
+        var response = await client.PostAsync($"{url}api/images", content);
 
         if (response.IsSuccessStatusCode)
         {
-            var uploadedFileName = await response.Content.ReadAsStringAsync();
-            imagePath = $"{url}/{uploadedFileName}";
             message = "File has been uploaded successfully!";
         }
     }
