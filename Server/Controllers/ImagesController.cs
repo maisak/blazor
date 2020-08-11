@@ -20,36 +20,31 @@ namespace SampleBlazorApp.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] IFormFile image)
+        public async Task<IActionResult> Post([FromBody] MyJson json)
         {
-            if (image == null || image.Length == 0)
+            if (json.image == null || json.image.Length == 0)
                 return BadRequest("Upload a file");
-
-            var fileName = image.FileName;
-            var extension = Path.GetExtension(fileName);
             
-            string[] allowedExtensions = {".jpg", ".png", ".bmp"};
+            string[] allowedExtensions = {"image/jpeg", "image/png"};
 
-            if (!allowedExtensions.Contains(extension))
+            if (!allowedExtensions.Contains(json.type))
                 return BadRequest("File is not a valid image");
-
-            string stringToMoveToDb;
-
-            await using (var ms = new MemoryStream())
-            {
-                await image.CopyToAsync(ms);
-                stringToMoveToDb = Convert.ToBase64String(ms.ToArray());
-            }
-
+            
             var newImage = new Image
             {
-                Type = extension,
-                Base64String = stringToMoveToDb
+                Type = json.type,
+                Base64String = json.image
             };
 
             await _imageService.AddImageAsync(newImage);
 
             return Ok();
         }
+    }
+
+    public class MyJson
+    {
+        public string image { get; set; }
+        public string type { get; set; }
     }
 }
