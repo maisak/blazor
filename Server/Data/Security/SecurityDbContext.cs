@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SampleBlazorApp.Server.Models;
 
-namespace SampleBlazorApp.Server.Data.Application
+namespace SampleBlazorApp.Server.Data.Security
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class SecurityDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options,
+        public SecurityDbContext(
+            DbContextOptions<SecurityDbContext> options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }

@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleBlazorApp.Server.Data.Application;
 using SampleBlazorApp.Server.Data.Image;
+using SampleBlazorApp.Server.Data.Security;
 using SampleBlazorApp.Server.Models;
 
 namespace SampleBlazorApp.Server
@@ -24,15 +24,15 @@ namespace SampleBlazorApp.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<SecurityDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("SecurityDb")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<SecurityDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, SecurityDbContext>();
 
             services.AddCors(options =>
             {

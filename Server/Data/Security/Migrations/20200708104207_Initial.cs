@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
-namespace SampleBlazorApp.Server.Data.Application.Migrations
+namespace SampleBlazorApp.Server.Data.Security.Migrations
 {
     public partial class Initial : Migration
     {
