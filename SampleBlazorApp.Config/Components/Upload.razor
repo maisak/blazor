@@ -1,6 +1,7 @@
 ﻿@page "/upload"
 
 @using System.IO;
+@using System.Net.Http
 @using System.Net.Http.Headers
 @using System.Runtime.CompilerServices
 @using System.Text
@@ -28,7 +29,7 @@
             </ul>
         </div>
 
-        <button type="button" disabled="@disabledButton" class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
+        <button type="button" disabled="@String.IsNullOrEmpty(imagePath)" class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
 
         @if (!string.IsNullOrWhiteSpace(message))
         {
@@ -57,10 +58,7 @@
     string size = string.Empty;
 
     Stream fileStream = null;
-
-    bool disabledButton = true;
-
-
+    
     async Task OpenFileAsync()
     {
         //Read the files
@@ -80,7 +78,6 @@
             fileStream = new MemoryStream(ms.ToArray());
             imageBase64 = Convert.ToBase64String(ms.ToArray());
             imagePath = $"data:image/{type};base64, {imageBase64}";
-            disabledButton = false;
         }
     }
 
