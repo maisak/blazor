@@ -9,6 +9,7 @@
 @using Tewr.Blazor.FileReader
 @using System.Text.Json
 @using Microsoft.AspNetCore.Authorization
+@using SampleBlazorApp.Client.Components
 
 @inject IFileReaderService fileReader
 @inject HttpClient client
@@ -16,10 +17,13 @@
 @inject NavigationManager NavigationManager
 
 @attribute [Authorize]
-<h1>Upload file!</h1>
 
-<div class="row">
+<div class="card m-3">
+    <div class="card-header">
+        Upload file via "browse" button
+    </div>
     <div class="col-4">
+        <br />
         <div class="form-group">
             <input type="file" @ref="inputReference" @onchange="OpenFileAsync" />
             <ul>
@@ -28,6 +32,17 @@
                 <li>Type: @type</li>
             </ul>
         </div>
+
+        <h3>Uploaded image:</h3>
+        <br />
+        <div class="col-4">
+            @if (imagePath != null)
+            {
+                <img style="width: 500px" src="@imagePath" />
+            }
+        </div>
+
+        <h3>Upload file to server</h3>
 
         <button type="button" disabled="@String.IsNullOrEmpty(imagePath)" class="btn btn-block btn-success" @onclick="UploadFileAsync">Upload File</button>
 
@@ -38,11 +53,13 @@
             </div>
         }
     </div>
-    <div class="col-4">
-        @if (imagePath != null)
-        {
-            <img style="width:150px" src="@imagePath"/>
-        }
+</div>
+<div class="card m-3">
+    <div class="card-header">
+        Upload image via drag'n'drop area
+    </div>
+    <div class="m-3">
+        <DragDropImage />
     </div>
 </div>
 
@@ -58,7 +75,7 @@
     string size = string.Empty;
 
     Stream fileStream = null;
-    
+
     async Task OpenFileAsync()
     {
         //Read the files
@@ -85,7 +102,7 @@
     {
         string url = new Uri(NavigationManager.BaseUri).ToString();
 
-        var content = new StringContent(JsonSerializer.Serialize(new { Image = imageBase64, Type = type}), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(new { Image = imageBase64, Type = type }), Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync($"{url}api/images", content);
 
