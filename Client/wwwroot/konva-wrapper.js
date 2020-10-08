@@ -46,7 +46,7 @@
                 width: 200,
                 height: 137,
                 name: 'image',
-                draggable: true,
+                draggable: true
             });
 
             loadedImage.on('mouseover', function () {
@@ -65,107 +65,21 @@
 
             layer.draw();
 
-            var selectionRectangle = new Konva.Rect({
-                fill: 'rgba(0,0,255,0.5)'
-            });
-            layer.add(selectionRectangle);
-
-            var x1, y1, x2, y2;
-            stage.on('mousedown touchstart', (e) => {
-                // do nothing if we mousedown on eny shape
-                if (e.target !== stage) {
-                    return;
-                }
-                x1 = stage.getPointerPosition().x;
-                y1 = stage.getPointerPosition().y;
-                x2 = stage.getPointerPosition().x;
-                y2 = stage.getPointerPosition().y;
-
-                selectionRectangle.visible(true);
-                selectionRectangle.width(0);
-                selectionRectangle.height(0);
-                layer.draw();
-            });
-
-            stage.on('mousemove touchmove', () => {
-                // no nothing if we didn't start selection
-                if (!selectionRectangle.visible()) {
-                    return;
-                }
-                x2 = stage.getPointerPosition().x;
-                y2 = stage.getPointerPosition().y;
-
-                selectionRectangle.setAttrs({
-                    x: Math.min(x1, x2),
-                    y: Math.min(y1, y2),
-                    width: Math.abs(x2 - x1),
-                    height: Math.abs(y2 - y1),
-                });
-                layer.batchDraw();
-            });
-
-            stage.on('mouseup touchend', () => {
-                // no nothing if we didn't start selection
-                if (!selectionRectangle.visible()) {
-                    return;
-                }
-                // update visibility in timeout, so we can check it in click event
-                setTimeout(() => {
-                    selectionRectangle.visible(false);
-                    layer.batchDraw();
-                });
-
-                var shapes = stage.find('.image').toArray();
-                var box = selectionRectangle.getClientRect();
-                var selected = shapes.filter((shape) =>
-                    Konva.Util.haveIntersection(box, shape.getClientRect())
-                );
-                tr.nodes(selected);
-                layer.batchDraw();
-            });
-
-            stage.on('click tap',
-                function (e) {
-                    // if we are selecting with rect, do nothing
-                    if (selectionRectangle.visible()) {
-                        return;
-                    }
-
-                    // if click on empty area - remove all selections
+            window.stage.on('click tap',
+                function(e) {
                     if (e.target === stage) {
+                        console.log('executing click tap - target = stage');
                         tr.nodes([]);
                         layer.draw();
                         return;
                     }
-
-                    // do nothing if clicked NOT on our rectangles
-                    if (!e.target.hasName('image')) {
+                    if (e.target.hasName('image')) {
+                        console.log('executing click tap - target = image');
+                        tr.nodes([e.target]);
+                        layer.draw();
                         return;
                     }
-
-                    // do we pressed shift or ctrl?
-                    const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-                    const isSelected = tr.nodes().indexOf(e.target) >= 0;
-
-                    if (!metaPressed && !isSelected) {
-                        // if no key pressed and the node is not selected
-                        // select just one
-                        tr.nodes([e.target]);
-                    } else if (metaPressed && isSelected) {
-                        // if we pressed keys and node was selected
-                        // we need to remove it from selection:
-                        const nodes = tr.nodes().slice(); // use slice to have new copy of array
-                        // remove node from array
-                        nodes.splice(nodes.indexOf(e.target), 1);
-                        tr.nodes(nodes);
-                    } else if (metaPressed && !isSelected) {
-                        // add the node into selection
-                        const nodes = tr.nodes().concat([e.target]);
-                        tr.nodes(nodes);
-                    }
-                    layer.draw();
                 });
-
         }
         imageObj.src = imageBase64;
     }
