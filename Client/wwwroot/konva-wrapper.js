@@ -1,42 +1,16 @@
 ﻿window.konvawrap = {
     init: function (element, dotNetRef) {
-        // first we need to create a stage
         window.stage = new Konva.Stage({
             container: 'container', // id of container <div>
             width: 500,
             height: 500
         });
-        console.log("init done");
-        console.log(konvawrap.stage);
-    },
-
-    drawCircle: function () {
-        // then create layer
-        var layer = new Konva.Layer();
-
-        // create our shape
-        var circle = new Konva.Circle({
-            x: window.stage.width() / 2,
-            y: window.stage.height() / 2,
-            radius: 70,
-            fill: 'red',
-            stroke: 'black',
-            strokeWidth: 4
-        });
-
-        // add the shape to the layer
-        layer.add(circle);
-
-        // add the layer to the stage
-        window.stage.add(layer);
-
-        // draw the image
-        layer.draw();
+        var textLayer = new Konva.Layer({ id: 'textLayer' });
+        var imageLayer = new Konva.Layer({ id: 'imageLayer' });
+        window.stage.add(textLayer, imageLayer);
     },
     drawImage: function drawImage(imageBase64) {
-        var layer = new Konva.Layer();
-        window.stage.add(layer);
-
+        var layer = window.stage.find('#imageLayer');
         var imageObj = new Image();
         imageObj.onload = function () {
             var loadedImage = new Konva.Image({
@@ -82,5 +56,26 @@
                 });
         }
         imageObj.src = imageBase64;
+    },
+    addText: function(id, text) {
+        var layer = window.stage.find('#textLayer');
+        var simpleText = new Konva.Text({
+            x: 15,
+            y: 15,
+            text: text,
+            fontSize: 16,
+            fontFamily: 'Calibri',
+            fill: 'red',
+            id: id,
+            draggable: true
+        });
+        layer.add(simpleText);
+        layer.draw();
+    },
+    updateText: function(id, text) {
+        var layer = window.stage.find('#textLayer');
+        var textItem = window.stage.find('#' + id);
+        textItem.text(text);
+        layer.draw();
     }
 }

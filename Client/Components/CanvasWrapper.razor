@@ -1,16 +1,26 @@
 ﻿@inject IJSRuntime JsRuntime
 <h3>CanvasWrapper</h3>
-<button @onclick=Circle>Draw circle</button>
+<button @onclick=@AddText>Add text</button>
 <div id="container" @ref="_div" style="width: 500px; height: 500px; background: lightgrey">
 
 </div>
 <div>
-    <ImageUpload OnFileAdded=@DrawImage/>
+    <ImageUpload OnFileAdded=@DrawImage />
+    <br/>
+    @foreach (var item in _texts)
+    {
+        <input id=@item.Key type="text" value=@item.Value @onchange="@(args => UpdateText(args, item.Key))"/>
+    }
 </div>
 
 @code {
-    private ElementReference _div;
-    private DotNetObjectReference<CanvasWrapper> _dotNetReference;
+    ElementReference _div;
+    DotNetObjectReference<CanvasWrapper> _dotNetReference;
+    Dictionary<Guid, string> _texts = new Dictionary<Guid, string>
+    {
+        {Guid.NewGuid(), "one"},
+        {Guid.NewGuid(), "two"}
+    };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -27,9 +37,18 @@
         await JsRuntime.InvokeVoidAsync("alert", value);
     }
 
-    private async Task Circle()
+    private async Task AddText()
     {
-        await JsRuntime.InvokeVoidAsync("konvawrap.drawCircle");
+        var id = Guid.NewGuid();
+        var text = "zero";
+        _texts.Add(id, text);
+        StateHasChanged();
+        await JsRuntime.InvokeVoidAsync("konvawrap.addText", id, text);
+    }
+
+    private async Task UpdateText(ChangeEventArgs args, Guid id)
+    {
+        await JsRuntime.InvokeVoidAsync("konvawrap.updateText", id, args.Value);
     }
 
     private async Task DrawImage(string image)
