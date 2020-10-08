@@ -44,6 +44,9 @@
 <br />
 <textarea style="max-width: 100%;" cols="50" rows="20">@Output</textarea>
 @code {
+    [Parameter]
+    public EventCallback<int> OnFileAdded { get; set; }
+
     ElementReference dropTargetElement;
     ElementReference dropTargetInput;
     IFileReaderRef dropReference;
@@ -97,6 +100,7 @@
     {
         Output += "Dropped a file.";
         _dropClasses.Remove(dropTargetDragClass);
+        await OnFileAdded.InvokeAsync(4);
         this.StateHasChanged();
         await this.RefreshDropFileList();
     }

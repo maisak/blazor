@@ -1,0 +1,39 @@
+﻿@inject IJSRuntime JsRuntime
+<h3>CanvasWrapper</h3>
+<button @onclick=Circle>Draw circle</button>
+<div id="container" @ref="_div" style="width: 500px; height: 500px; background: lightgrey">
+
+</div>
+<div>
+    <ImageUpload OnFileAdded=@DrawImage/>
+</div>
+
+@code {
+    private ElementReference _div;
+    private DotNetObjectReference<CanvasWrapper> _dotNetReference;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            _dotNetReference = DotNetObjectReference.Create(this);
+            await JsRuntime.InvokeVoidAsync("konvawrap.init", _div, _dotNetReference);
+        }
+    }
+
+    private async Task Alert(string value)
+    {
+        await JsRuntime.InvokeVoidAsync("alert", value);
+    }
+
+    private async Task Circle()
+    {
+        await JsRuntime.InvokeVoidAsync("konvawrap.drawCircle");
+    }
+
+    private async Task DrawImage(string image)
+    {
+        await JsRuntime.InvokeVoidAsync("konvawrap.drawImage", image);
+    }
+}

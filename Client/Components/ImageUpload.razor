@@ -1,0 +1,43 @@
+﻿@using Tewr.Blazor.FileReader
+@using System.IO
+@inject IFileReaderService _fileReaderService;
+
+<input type="file" @ref="_inputReference" @onchange="OpenFileAsync"  />
+
+@code {
+    ElementReference _inputReference;
+    string message = String.Empty;
+    string imageEncoded = null;
+    string imageBase64 = null;
+
+    string fileName = string.Empty;
+    string type = string.Empty;
+    string size = string.Empty;
+    Stream fileStream = null;
+
+    [Parameter]
+    public EventCallback<string> OnFileAdded { get; set; }
+
+    async Task OpenFileAsync()
+    {
+        //Read the files
+        var file = (await _fileReaderService.CreateReference(_inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+            return;
+
+        //Get the info of the file
+        var fileInfo = await file.ReadFileInfoAsync();
+        fileName = fileInfo.Name;
+        size = $"{fileInfo.Size}b";
+        type = fileInfo.Type;
+
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+        {
+            fileStream = new MemoryStream(ms.ToArray());
+            imageEncoded = Convert.ToBase64String(ms.ToArray());
+            imageBase64 = $"data:image/{type};base64, {imageEncoded}";
+            await OnFileAdded.InvokeAsync(imageBase64);
+        }
+    }
+}
