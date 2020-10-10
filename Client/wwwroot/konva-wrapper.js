@@ -1,13 +1,17 @@
 ﻿window.konvawrap = {
+    stageWidth: 500,
+    stageHeight: 500,
     init: function (element, dotNetRef) {
         window.stage = new Konva.Stage({
-            container: 'container', // id of container <div>
-            width: 500,
-            height: 500
+            container: 'canvasContainer',
+            width: konvawrap.stageWidth,
+            height: konvawrap.stageHeight
         });
         var textLayer = new Konva.Layer({ id: 'textLayer' });
         var imageLayer = new Konva.Layer({ id: 'imageLayer' });
         window.stage.add(textLayer, imageLayer);
+        konvawrap.fitStageIntoParentContainer();
+        window.addEventListener('resize', konvawrap.fitStageIntoParentContainer);
     },
     drawImage: function drawImage(imageBase64) {
         var layer = window.stage.find('#imageLayer');
@@ -15,45 +19,13 @@
         imageObj.onload = function () {
             var loadedImage = new Konva.Image({
                 image: imageObj,
-                x: stage.width() / 2 - 200 / 2,
-                y: stage.height() / 2 - 137 / 2,
-                width: 200,
-                height: 137,
+                x: 10,//stage.width() / 2 - 200 / 2,
+                y: 10, //stage.height() / 2 - 137 / 2,
                 name: 'image',
                 draggable: true
             });
-
-            loadedImage.on('mouseover', function () {
-                document.body.style.cursor = 'pointer';
-            });
-            loadedImage.on('mouseout', function () {
-                document.body.style.cursor = 'default';
-            });
-
             layer.add(loadedImage);
-
-
-            var tr = new Konva.Transformer();
-            layer.add(tr);
-            tr.nodes([loadedImage]);
-
-            layer.draw();
-
-            window.stage.on('click tap',
-                function(e) {
-                    if (e.target === stage) {
-                        console.log('executing click tap - target = stage');
-                        tr.nodes([]);
-                        layer.draw();
-                        return;
-                    }
-                    if (e.target.hasName('image')) {
-                        console.log('executing click tap - target = image');
-                        tr.nodes([e.target]);
-                        layer.draw();
-                        return;
-                    }
-                });
+            konvawrap.configureImage(loadedImage, layer);
         }
         imageObj.src = imageBase64;
     },
@@ -63,7 +35,7 @@
             x: 15,
             y: 15,
             text: text,
-            fontSize: 16,
+            fontSize: 20,
             fontFamily: 'Calibri',
             fill: 'red',
             id: id,
@@ -77,5 +49,41 @@
         var textItem = window.stage.find('#' + id);
         textItem.text(text);
         layer.draw();
+    },
+    configureImage: function (loadedImage, layer) {
+        loadedImage.on('mouseover', function () {
+            document.body.style.cursor = 'pointer';
+        });
+        loadedImage.on('mouseout', function () {
+            document.body.style.cursor = 'default';
+        });
+        var tr = new Konva.Transformer({
+            nodes: [loadedImage],
+            keepRatio: true
+        });
+        layer.add(tr);
+        layer.draw();
+        window.stage.on('click tap',
+            function (e) {
+                if (e.target === stage) {
+                    tr.nodes([]);
+                    layer.draw();
+                    return;
+                }
+                if (e.target.hasName('image')) {
+                    tr.nodes([e.target]);
+                    layer.draw();
+                    return;
+                }
+            });
+    },
+    fitStageIntoParentContainer: function () {
+        var container = document.querySelector('#stage-parent');
+        var containerWidth = container.offsetWidth;
+        var scale = containerWidth / konvawrap.stageWidth;
+        stage.width(konvawrap.stageWidth * scale);
+        stage.height(konvawrap.stageHeight * scale);
+        stage.scale({ x: scale, y: scale });
+        stage.draw();
     }
 }

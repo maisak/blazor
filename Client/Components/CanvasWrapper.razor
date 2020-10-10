@@ -1,26 +1,46 @@
 ﻿@inject IJSRuntime JsRuntime
-<h3>CanvasWrapper</h3>
-<button @onclick=@AddText>Add text</button>
-<div id="container" @ref="_div" style="width: 500px; height: 500px; background: lightgrey">
 
+<div class="container m-0">
+    <div class="row">
+        <div id="stage-parent" class="col-6 p-0" style="width: 100%">
+            <div id="canvasContainer" @ref="_div" style="background: lightgrey"></div>
+        </div>
+        <div class="col-6 pl-3">
+            <div class="pb-3">
+                <ImageUpload OnFileAdded=@DrawImage />
+                <br/>
+                <button class="btn btn-secondary m-1" @onclick=@AddText>Add text</button>
+                <br/>
+                <div class="p-1">
+                    @foreach (var item in _texts)
+                    {
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Text</span>
+                            </div>
+                            <input id=@item.Key value=@item.Value @onchange="@(args => UpdateText(args, item.Key))" type="text" class="form-control" placeholder="Text" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="">
+                <h3>Note:</h3>
+                <ul>
+                    <li>To add an image - click on 'Browse' button. Adding via drag'n'drop possible too, but not implemented yet.</li>
+                    <li>To add a text - click on 'Add text' button. To edit it - modify text in corresponding input and hit 'Enter'.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <ImageUpload OnFileAdded=@DrawImage />
-    <br/>
-    @foreach (var item in _texts)
-    {
-        <input id=@item.Key type="text" value=@item.Value @onchange="@(args => UpdateText(args, item.Key))"/>
-    }
-</div>
+
+
+
 
 @code {
     ElementReference _div;
     DotNetObjectReference<CanvasWrapper> _dotNetReference;
-    Dictionary<Guid, string> _texts = new Dictionary<Guid, string>
-    {
-        {Guid.NewGuid(), "one"},
-        {Guid.NewGuid(), "two"}
-    };
+    Dictionary<Guid, string> _texts = new Dictionary<Guid, string>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

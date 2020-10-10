@@ -2,7 +2,7 @@
 @using System.IO
 @inject IFileReaderService _fileReaderService;
 
-<input type="file" @ref="_inputReference" @onchange="OpenFileAsync"  />
+<input type="file" class="p-1" @ref="_inputReference" @onchange="OpenFileAsync"  />
 
 @code {
     ElementReference _inputReference;
