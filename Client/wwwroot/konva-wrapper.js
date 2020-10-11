@@ -1,7 +1,9 @@
 ﻿window.konvawrap = {
     stageWidth: 500,
     stageHeight: 500,
+    dotNetReference: null,
     init: function (element, dotNetRef) {
+        konvawrap.dotNetReference = dotNetRef;
         window.stage = new Konva.Stage({
             container: 'canvasContainer',
             width: konvawrap.stageWidth,
@@ -85,5 +87,9 @@
         stage.height(konvawrap.stageHeight * scale);
         stage.scale({ x: scale, y: scale });
         stage.draw();
+    },
+    serializeToJson: function() {
+        var json = window.stage.toJSON();
+        konvawrap.dotNetReference.invokeMethodAsync('ShowExportedJson', json);
     }
 }

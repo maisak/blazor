@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@using SampleBlazorApp.Shared.Extensions
+@inject IJSRuntime JsRuntime
 
 <div class="container m-0">
     <div class="row">
@@ -32,13 +33,20 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-6 mt-2">
+            <button class="btn btn-secondary" @onclick=@Export>Export</button>
+        </div>
+        <br/>
+        <div style="height: 500px;overflow-y: scroll">
+            <pre>@exportedJson</pre>
+        </div>
+    </div>
 </div>
-
-
-
 
 @code {
     ElementReference _div;
+    string exportedJson = string.Empty;
     DotNetObjectReference<CanvasWrapper> _dotNetReference;
     Dictionary<Guid, string> _texts = new Dictionary<Guid, string>();
 
@@ -74,5 +82,17 @@
     private async Task DrawImage(string image)
     {
         await JsRuntime.InvokeVoidAsync("konvawrap.drawImage", image);
+    }
+
+    private async Task Export()
+    {
+        await JsRuntime.InvokeVoidAsync("konvawrap.serializeToJson");
+    }
+
+    [JSInvokable]
+    public void ShowExportedJson(string json)
+    {
+        exportedJson = json.FormatJson();
+        StateHasChanged();
     }
 }
