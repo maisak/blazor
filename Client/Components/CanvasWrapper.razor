@@ -38,7 +38,7 @@
             <button class="btn btn-secondary" @onclick=@Export>Export</button>
         </div>
         <br/>
-        <div style="height: 500px;overflow-y: scroll">
+        <div class="col-12 @(string.IsNullOrEmpty(exportedJson) ? "d-none" : "")" style="height: 500px;overflow-y: scroll">
             <pre>@exportedJson</pre>
         </div>
     </div>
